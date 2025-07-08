@@ -1,0 +1,26 @@
+{
+  "name": "postgresql-api-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vishvjeet-Rana/postgresql-api-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Vishvjeet-Rana/postgresql-api-project/issues"
+  },
+  "homepage": "https://github.com/Vishvjeet-Rana/postgresql-api-project#readme",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.1",
+    "nodemailer": "^7.0.5"
+  }
+}

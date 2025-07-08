@@ -6,7 +6,7 @@ if (!process.env.SENDGRID_EMAIL || !process.env.SENDGRID_API_KEY) {
   throw new Error("Missing sendGrid config in env file");
 }
 
-const transporter = nodemailer.transporter({
+const transporter = nodemailer.createTransport({
   host: "smtp.sendgrid.net",
   port: 587,
   auth: {
@@ -18,6 +18,7 @@ const transporter = nodemailer.transporter({
 export const sendMail = async ({ to, subject, html }) => {
   try {
     await transporter.sendMail({
+      from: process.env.SENDGRID_EMAIL,
       to,
       subject,
       html,

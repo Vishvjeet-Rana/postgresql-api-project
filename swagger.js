@@ -5,9 +5,9 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Blog API",
+      title: "Blog API PostgreSQL",
       version: "1.0.0",
-      description: "API documentation for Blog CRUD app with auth",
+      description: "API documentation for Blog CRUD PostgreSQL app with auth",
     },
     servers: [
       {

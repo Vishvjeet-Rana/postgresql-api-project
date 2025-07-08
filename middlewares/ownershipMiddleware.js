@@ -2,8 +2,8 @@ import prisma from "../config/db.js";
 
 export const isAuthorOrAdmin = async (req, res, next) => {
   try {
-    const postId = Number(req.params.id);
-    if (isNaN) {
+    const postId = parseInt(req.params.id);
+    if (isNaN(postId)) {
       return res.status(400).json({ message: "Expects a number as id" });
     }
 

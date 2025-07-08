@@ -18,7 +18,7 @@ export const register = async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const image = req.file ? req.file.name : null;
+  const image = req.file ? req.file.filename : null;
 
   const user = await prisma.user.create({
     data: {

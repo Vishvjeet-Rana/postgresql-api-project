@@ -5,6 +5,7 @@ import cors from "cors";
 import prisma from "./config/db.js";
 import { swaggerDocs } from "./swagger.js";
 import authRoutes from "./routes/authRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 
 // all routes are here
 app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
 
 swaggerDocs(app);
 const PORT = 3000;

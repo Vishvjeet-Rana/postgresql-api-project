@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ quiet: true });
 
 if (!process.env.SENDGRID_EMAIL || !process.env.SENDGRID_API_KEY) {
   throw new Error("Missing sendGrid config in env file");

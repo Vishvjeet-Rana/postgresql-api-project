@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ quiet: true });
 import cors from "cors";
 import prisma from "./config/db.js";
 import { swaggerDocs } from "./swagger.js";

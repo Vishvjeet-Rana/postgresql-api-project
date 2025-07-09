@@ -18,8 +18,9 @@ model User {
   id             Int      @id @default(autoincrement())
   name           String
   email          String   @unique
-  password       String
+  password       String?
   role           Role     @default(USER)
+  isVerified     Boolean  @default(false)
   profilePicture String?  // for uploaded profile photo
   resetToken       String?   // for password reset
   resetTokenExpire DateTime? 
@@ -33,7 +34,6 @@ model Post {
   title     String
   content   String
   image     String?  // optional
-  published Boolean  @default(false)
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
   createdAt DateTime @default(now())

@@ -1,13 +1,18 @@
 import express from "express";
-import { protect } from "../middlewares/authMiddleware.js";
-import { upload } from "../middlewares/uploadMiddleware.js";
+import { protect } from "../middlewares/authMiddleware";
+import { upload } from "../middlewares/uploadMiddleware";
 import {
   getProfile,
   updateProfile,
   uploadProfilePicture,
-} from "../controllers/profileController.js";
+} from "../controllers/profileController";
+import { Router } from "express";
 
-const router = express.Router();
+import { updateProfileSchema } from "../validators/profile.validator";
+
+import validate from "../middlewares/validateRequest";
+
+const router: Router = Router();
 
 /**
  * @swagger
@@ -69,7 +74,7 @@ router.get("/", protect, getProfile);
  *       404:
  *         description: User not found
  */
-router.put("/", protect, updateProfile);
+router.put("/", protect, validate(updateProfileSchema), updateProfile);
 
 /**
  * @swagger

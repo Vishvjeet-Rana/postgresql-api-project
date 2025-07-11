@@ -1,7 +1,9 @@
-import prisma from "../config/db.js";
+import prisma from "../config/db";
+import { Request, Response } from "express";
+import { User } from "../../generated/prisma";
 
-export const getProfile = async (req, res) => {
-  const user = await prisma.user.findUnique({
+export const getProfile = async (req: Request, res: Response) => {
+  const user: User = await prisma.user.findUnique({
     where: { id: req.user.id },
     select: {
       id: true,
@@ -16,10 +18,12 @@ export const getProfile = async (req, res) => {
   res.status(200).json(user);
 };
 
-export const updateProfile = async (req, res) => {
+export const updateProfile = async (req: Request, res: Response) => {
   const { name, email } = req.body;
 
-  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+  const user: User = await prisma.user.findUnique({
+    where: { id: req.user.id },
+  });
   if (!user) return res.status(400).json({ message: "User not found" });
 
   const updatedUser = await prisma.user.update({
@@ -40,7 +44,7 @@ export const updateProfile = async (req, res) => {
   });
 };
 
-export const uploadProfilePicture = async (req, res) => {
+export const uploadProfilePicture = async (req: Request, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ message: "Profile picture not uploaded" });
   }
@@ -57,5 +61,8 @@ export const uploadProfilePicture = async (req, res) => {
   res.status(200).json({
     message: "Profile picture uploaded successfully",
     profilePicture: filePath,
+    user: {
+      user,
+    },
   });
 };

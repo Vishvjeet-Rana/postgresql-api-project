@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // Modern JS support
+    "module": "CommonJS", // Works best with Node.js
+    "rootDir": "src", // Source TypeScript files
+    "outDir": "dist", // Where compiled JS files go
+    "strict": true, // Enables all strict type checks
+    "moduleResolution": "node",
+    "esModuleInterop": true, // Allow default imports from CommonJS modules
+    "skipLibCheck": true, // Speeds up build by skipping type check of libs
+    "forceConsistentCasingInFileNames": true, // Helps avoid case-related bugs
+    "resolveJsonModule": true, // Allows importing .json files (important for Swagger)
+    "typeRoots": ["./types", "./node_modules/@types"]
+  },
+  "include": ["**/*.ts"], // Only compile from src folder
+  "exclude": ["node_modules", "dist"] // Don't compile these
+}

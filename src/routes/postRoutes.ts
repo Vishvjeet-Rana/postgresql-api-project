@@ -1,7 +1,8 @@
 import express from "express";
-import { protect } from "../middlewares/authMiddleware.js";
-import { upload } from "../middlewares/uploadMiddleware.js";
-import { isAuthorOrAdmin } from "../middlewares/ownershipMiddleware.js";
+import { protect } from "../middlewares/authMiddleware";
+import { upload } from "../middlewares/uploadMiddleware";
+import { isAuthorOrAdmin } from "../middlewares/ownershipMiddleware";
+import { Router } from "express";
 
 import {
   createPost,
@@ -9,9 +10,17 @@ import {
   getPostById,
   updatePost,
   deletePost,
-} from "../controllers/postController.js";
+} from "../controllers/postController";
 
-const router = express.Router();
+import {
+  createPostSchema,
+  updatePostSchema,
+  postIdParamSchema,
+} from "../validators/post.validator";
+
+import validate from "../middlewares/validateRequest";
+
+const router: Router = Router();
 
 /**
  * @swagger
@@ -44,7 +53,13 @@ const router = express.Router();
  *       401:
  *         description: Unauthorized
  */
-router.post("/", protect, upload.single("image"), createPost);
+router.post(
+  "/",
+  protect,
+  upload.single("image"),
+  validate(createPostSchema),
+  createPost
+);
 
 /**
  * @swagger
@@ -79,7 +94,7 @@ router.get("/", getAllPosts);
  *       404:
  *         description: Post not found
  */
-router.get("/:id", getPostById);
+router.get("/:id", validate(postIdParamSchema), getPostById);
 
 /**
  * @swagger
@@ -115,7 +130,13 @@ router.get("/:id", getPostById);
  *       403:
  *         description: Not authorized
  */
-router.put("/:id", protect, isAuthorOrAdmin, updatePost);
+router.put(
+  "/:id",
+  protect,
+  isAuthorOrAdmin,
+  validate(updatePostSchema),
+  updatePost
+);
 
 /**
  * @swagger
@@ -140,6 +161,12 @@ router.put("/:id", protect, isAuthorOrAdmin, updatePost);
  *       403:
  *         description: Not authorized
  */
-router.delete("/:id", protect, isAuthorOrAdmin, deletePost);
+router.delete(
+  "/:id",
+  protect,
+  isAuthorOrAdmin,
+  validate(postIdParamSchema),
+  deletePost
+);
 
 export default router;

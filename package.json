@@ -2,10 +2,11 @@
   "name": "postgresql-api-project",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -30,10 +31,19 @@
     "nodemailer": "^7.0.5",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.0.13",
+    "@types/nodemailer": "^6.4.17",
     "nodemon": "^3.1.10",
-    "prisma": "^6.11.1"
+    "prisma": "^6.11.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
   }
 }

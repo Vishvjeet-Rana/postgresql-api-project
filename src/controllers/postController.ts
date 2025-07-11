@@ -1,6 +1,8 @@
-import prisma from "../config/db.js";
+import prisma from "../config/db";
+import { Request, Response } from "express";
+import { Post } from "../../generated/prisma";
 
-export const createPost = async (req, res) => {
+export const createPost = async (req: Request, res: Response) => {
   try {
     const { title, content } = req.body;
 
@@ -10,7 +12,7 @@ export const createPost = async (req, res) => {
 
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-    const post = await prisma.post.create({
+    const post: Post = await prisma.post.create({
       data: {
         title,
         content,
@@ -25,9 +27,9 @@ export const createPost = async (req, res) => {
   }
 };
 
-export const getAllPosts = async (req, res) => {
+export const getAllPosts = async (req: Request, res: Response) => {
   try {
-    const posts = await prisma.post.findMany({
+    const posts: Post = await prisma.post.findMany({
       include: {
         author: {
           select: {
@@ -44,9 +46,9 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
-export const getPostById = async (req, res) => {
+export const getPostById = async (req: Request, res: Response) => {
   try {
-    const post = await prisma.post.findUnique({
+    const post: Post = await prisma.post.findUnique({
       where: { id: parseInt(req.params.id) },
       include: {
         author: {
@@ -66,7 +68,7 @@ export const getPostById = async (req, res) => {
   }
 };
 
-export const updatePost = async (req, res) => {
+export const updatePost = async (req: Request, res: Response) => {
   try {
     // debugging
     const postId = parseInt(req.params.id);
@@ -78,7 +80,7 @@ export const updatePost = async (req, res) => {
 
     const { title, content } = req.body;
 
-    const post = await prisma.post.findUnique({
+    const post: Post = await prisma.post.findUnique({
       where: { id: postId },
     });
 
@@ -100,7 +102,7 @@ export const updatePost = async (req, res) => {
   }
 };
 
-export const deletePost = async (req, res) => {
+export const deletePost = async (req: Request, res: Response) => {
   try {
     const postId = parseInt(req.params.id);
     if (isNaN(postId)) {
@@ -109,7 +111,7 @@ export const deletePost = async (req, res) => {
         .json({ message: "Invalid post ID (must be a number)" });
     }
 
-    const post = await prisma.post.findUnique({
+    const post: Post = await prisma.post.findUnique({
       where: { id: postId },
     });
 

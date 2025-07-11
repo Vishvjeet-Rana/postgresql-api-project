@@ -1,6 +1,11 @@
 import prisma from "../config/db.js";
+import { Request, Response, NextFunction } from "express";
 
-export const isAuthorOrAdmin = async (req, res, next) => {
+export const isAuthorOrAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const postId = parseInt(req.params.id);
     if (isNaN(postId)) {

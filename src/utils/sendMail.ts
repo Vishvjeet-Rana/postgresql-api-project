@@ -15,7 +15,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendMail = async ({ to, subject, html }) => {
+interface SendMailOptions {
+  to: string;
+  subject: string;
+  html: string;
+}
+
+export const sendMail = async ({ to, subject, html }: SendMailOptions) => {
   try {
     await transporter.sendMail({
       from: process.env.SENDGRID_EMAIL,
@@ -23,7 +29,7 @@ export const sendMail = async ({ to, subject, html }) => {
       subject,
       html,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Email send failed:", error.response?.body || error);
     throw new Error("Email send failed");
   }

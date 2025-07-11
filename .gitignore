@@ -8,3 +8,5 @@ prisma/generated/
 prisma/migrations/
 
 uploads/
+
+dist/

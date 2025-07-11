@@ -7,9 +7,20 @@ import {
   forgotPassword,
   resetPassword,
   changePassword,
-} from "../controllers/authController.js";
+} from "../controllers/authController";
 
-import { protect } from "../middlewares/authMiddleware.js";
+import { protect } from "../middlewares/authMiddleware";
+import { Router } from "express";
+
+import {
+  registerSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  changePasswordSchema,
+} from "../validators/auth.validator";
+
+import validate from "../middlewares/validateRequest";
 
 import multer from "multer";
 const storage = multer.diskStorage({
@@ -23,7 +34,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-const router = express.Router();
+const router: Router = Router();
 
 /**
  * @swagger
@@ -54,7 +65,12 @@ const router = express.Router();
  *       400:
  *         description: User already exists
  */
-router.post("/register", upload.single("image"), register);
+router.post(
+  "/register",
+  upload.single("image"),
+  validate(registerSchema),
+  register
+);
 
 /**
  * @swagger
@@ -80,7 +96,7 @@ router.post("/register", upload.single("image"), register);
  *       400:
  *         description: Invalid credentials
  */
-router.post("/login", login);
+router.post("/login", validate(loginSchema), login);
 
 /**
  * @swagger
@@ -120,7 +136,7 @@ router.get("/me", protect, getMe);
  *       400:
  *         description: User not found
  */
-router.post("/forgot-password", forgotPassword);
+router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
 
 /**
  * @swagger
@@ -151,7 +167,11 @@ router.post("/forgot-password", forgotPassword);
  *       400:
  *         description: Invalid or expired token
  */
-router.post("/reset-password/:token", resetPassword);
+router.post(
+  "/reset-password/:token",
+  validate(resetPasswordSchema),
+  resetPassword
+);
 
 /**
  * @swagger
@@ -181,6 +201,11 @@ router.post("/reset-password/:token", resetPassword);
  *       401:
  *         description: Unauthorized
  */
-router.post("/change-password", protect, changePassword);
+router.post(
+  "/change-password",
+  protect,
+  validate(changePasswordSchema),
+  changePassword
+);
 
 export default router;

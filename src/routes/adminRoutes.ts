@@ -6,11 +6,21 @@ import {
   updateUser,
   deleteUser,
   verifyUser,
-} from "../controllers/adminController.js";
-import { adminOnly } from "../middlewares/adminMiddleware.js";
-import { protect } from "../middlewares/authMiddleware.js";
+} from "../controllers/adminController";
 
-const router = express.Router();
+import {
+  createUserSchema,
+  updateUserSchema,
+  userIdParamSchema,
+} from "../validators/admin.validator";
+
+import { adminOnly } from "../middlewares/adminMiddleware";
+import { protect } from "../middlewares/authMiddleware";
+import { Router } from "express";
+
+import validate from "../middlewares/validateRequest";
+
+const router: Router = Router();
 
 /**
  * @swagger
@@ -38,7 +48,7 @@ const router = express.Router();
  *       400:
  *         description: User already exists
  */
-router.post("/", protect, adminOnly, createUser);
+router.post("/", protect, adminOnly, validate(createUserSchema), createUser);
 
 /**
  * @swagger
@@ -81,7 +91,13 @@ router.get("/", protect, adminOnly, getAllUsers);
  *       404:
  *         description: User not found
  */
-router.get("/:id", protect, adminOnly, getUserById);
+router.get(
+  "/:id",
+  protect,
+  adminOnly,
+  validate(userIdParamSchema),
+  getUserById
+);
 
 /**
  * @swagger
@@ -117,7 +133,7 @@ router.get("/:id", protect, adminOnly, getUserById);
  *       404:
  *         description: User not found
  */
-router.put("/:id", protect, adminOnly, updateUser);
+router.put("/:id", protect, adminOnly, validate(updateUserSchema), updateUser);
 
 /**
  * @swagger
@@ -139,7 +155,13 @@ router.put("/:id", protect, adminOnly, updateUser);
  *       404:
  *         description: User not found
  */
-router.delete("/:id", protect, adminOnly, deleteUser);
+router.delete(
+  "/:id",
+  protect,
+  adminOnly,
+  validate(userIdParamSchema),
+  deleteUser
+);
 
 /**
  * @swagger
@@ -162,6 +184,12 @@ router.delete("/:id", protect, adminOnly, deleteUser);
  *       404:
  *         description: User not found
  */
-router.patch("/:id/verify", protect, adminOnly, verifyUser);
+router.patch(
+  "/:id/verify",
+  protect,
+  adminOnly,
+  validate(userIdParamSchema),
+  verifyUser
+);
 
 export default router;

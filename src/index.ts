@@ -21,7 +21,7 @@ app.use("/uploads", express.static("uploads"));
 app.use(responseFormatter);
 
 app.get("/", (req, res) => {
-  res.send("Blog API With PostgreSQL Project is running.");
+  res.send("Blog API Project With PostgreSQL is running.");
 });
 
 // all routes are here

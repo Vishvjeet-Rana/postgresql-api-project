@@ -1,13 +1,6 @@
 import express from "express";
-import {
-  createUser,
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
-  verifyUser,
-} from "../controllers/adminController";
-
+import { AdminController } from "../controllers/adminController";
+import { AdminService } from "../services/adminServices";
 import {
   createUserSchema,
   updateUserSchema,
@@ -21,6 +14,9 @@ import { Router } from "express";
 import validate from "../middlewares/validateRequest";
 
 const router: Router = Router();
+
+const adminService = new AdminService();
+const adminController = new AdminController(adminService);
 
 /**
  * @swagger
@@ -48,7 +44,13 @@ const router: Router = Router();
  *       400:
  *         description: User already exists
  */
-router.post("/", protect, adminOnly, validate(createUserSchema), createUser);
+router.post(
+  "/",
+  protect,
+  adminOnly,
+  validate(createUserSchema),
+  adminController.createUser
+);
 
 /**
  * @swagger
@@ -68,7 +70,7 @@ router.post("/", protect, adminOnly, validate(createUserSchema), createUser);
  *       200:
  *         description: List of users
  */
-router.get("/", protect, adminOnly, getAllUsers);
+router.get("/", protect, adminOnly, adminController.getAllUsers);
 
 /**
  * @swagger
@@ -96,7 +98,7 @@ router.get(
   protect,
   adminOnly,
   validate(userIdParamSchema),
-  getUserById
+  adminController.getUserById
 );
 
 /**
@@ -133,7 +135,13 @@ router.get(
  *       404:
  *         description: User not found
  */
-router.put("/:id", protect, adminOnly, validate(updateUserSchema), updateUser);
+router.put(
+  "/:id",
+  protect,
+  adminOnly,
+  validate(updateUserSchema),
+  adminController.updateUser
+);
 
 /**
  * @swagger
@@ -160,7 +168,7 @@ router.delete(
   protect,
   adminOnly,
   validate(userIdParamSchema),
-  deleteUser
+  adminController.deleteUser
 );
 
 /**
@@ -189,7 +197,7 @@ router.patch(
   protect,
   adminOnly,
   validate(userIdParamSchema),
-  verifyUser
+  adminController.verifyUser
 );
 
 export default router;

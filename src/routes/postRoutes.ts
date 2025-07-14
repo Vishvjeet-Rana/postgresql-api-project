@@ -5,14 +5,6 @@ import { isAuthorOrAdmin } from "../middlewares/ownershipMiddleware";
 import { Router } from "express";
 
 import {
-  createPost,
-  getAllPosts,
-  getPostById,
-  updatePost,
-  deletePost,
-} from "../controllers/postController";
-
-import {
   createPostSchema,
   updatePostSchema,
   postIdParamSchema,
@@ -20,7 +12,13 @@ import {
 
 import validate from "../middlewares/validateRequest";
 
+import { PostService } from "../services/postServices";
+import { PostController } from "../controllers/postController";
+
 const router: Router = Router();
+
+const postService = new PostService();
+const postController = new PostController(postService);
 
 /**
  * @swagger
@@ -58,7 +56,7 @@ router.post(
   protect,
   upload.single("image"),
   validate(createPostSchema),
-  createPost
+  postController.createPost
 );
 
 /**
@@ -73,7 +71,7 @@ router.post(
  *       500:
  *         description: Internal Server Error
  */
-router.get("/", getAllPosts);
+router.get("/", postController.getAllPosts);
 
 /**
  * @swagger
@@ -94,7 +92,7 @@ router.get("/", getAllPosts);
  *       404:
  *         description: Post not found
  */
-router.get("/:id", validate(postIdParamSchema), getPostById);
+router.get("/:id", validate(postIdParamSchema), postController.getPostById);
 
 /**
  * @swagger
@@ -135,7 +133,7 @@ router.put(
   protect,
   isAuthorOrAdmin,
   validate(updatePostSchema),
-  updatePost
+  postController.updatePost
 );
 
 /**
@@ -166,7 +164,7 @@ router.delete(
   protect,
   isAuthorOrAdmin,
   validate(postIdParamSchema),
-  deletePost
+  postController.deletePost
 );
 
 export default router;

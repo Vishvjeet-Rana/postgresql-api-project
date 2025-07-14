@@ -1,92 +1,96 @@
 import { Request, Response } from "express";
 import { AdminService } from "../services/adminServices";
-const adminService = new AdminService();
 
-// Admin creates a new user
-export const createUser = async (req: Request, res: Response) => {
-  try {
-    const { name, email } = req.body;
+export class AdminController {
+  constructor(private adminService: AdminService) {}
 
-    const user = await adminService.createUserByAdminService(
-      name,
-      email,
-      req.user.name
-    );
+  // admin created new user
+  public createUser = async (req: Request, res: Response) => {
+    try {
+      const { name, email } = req.body;
 
-    res.status(200).json({
-      message: "User created successfully and email sent to reset password",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isVerified: user.isVerified,
-      },
-    });
-  } catch (error: any) {
-    console.error(error);
-    res.status(400).json({ message: error.message });
-  }
-};
+      const user = await this.adminService.createUserByAdminService(
+        name,
+        email,
+        req.user.name
+      );
 
-// Get all users (optionally filtered by verification)
-export const getAllUsers = async (req: Request, res: Response) => {
-  try {
-    const verifiedQuery = req.query.verified as string;
-    const users = await adminService.getAllUsersService(verifiedQuery);
+      res.status(200).json({
+        message: "User created successfully and email sent to reset password",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          isVerified: user.isVerified,
+        },
+      });
+    } catch (error: any) {
+      console.error(error);
+      res.status(400).json({ message: error.message });
+    }
+  };
 
-    res.status(200).json(users);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-};
+  // get all users
+  public getAllUsers = async (req: Request, res: Response) => {
+    try {
+      const verifiedQuery = req.query.verified as string;
+      const users = await this.adminService.getAllUsersService(verifiedQuery);
 
-// Get single user by ID
-export const getUserById = async (req: Request, res: Response) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const user = await adminService.getUserByIdService(userId);
-    res.status(200).json(user);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
-  }
-};
+      res.status(200).json(users);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  };
 
-// Update user info
-export const updateUser = async (req: Request, res: Response) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const updatedUser = await adminService.updatedUserService(userId, req.body);
-    res.json({
-      message: "User updated successfully",
-      user: updatedUser,
-    });
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
-  }
-};
+  // GET single user by Id
+  public getUserById = async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const user = await this.adminService.getUserByIdService(userId);
+      res.status(200).json(user);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  };
 
-// Delete user by ID
-export const deleteUser = async (req: Request, res: Response) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const result = await adminService.deleteUserService(userId);
+  // update user
+  public updateUser = async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const updatedUser = await this.adminService.updatedUserService(
+        userId,
+        req.body
+      );
+      res.json({
+        message: "User updated successfully",
+        user: updatedUser,
+      });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  };
 
-    return res.status(200).json(result);
-  } catch (error: any) {
-    res.status(404).json({ message: error.message });
-  }
-};
+  public deleteUser = async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const result = await this.adminService.deleteUserService(userId);
 
-//  Verify user (set `isVerified` to true)
-export const verifyUser = async (req: Request, res: Response) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const result = await adminService.verifyUserService(userId);
+      return res.status(200).json(result);
+    } catch (error: any) {
+      res.status(404).json({ message: error.message });
+    }
+  };
 
-    return res.status(200).json(result);
-  } catch (error: any) {
-    console.error("Verify user error:", error);
-    res.status(500).json({ message: error.message });
-  }
-};
+  public verifyUser = async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const result = await this.adminService.verifyUserService(userId);
+
+      return res.status(200).json(result);
+    } catch (error: any) {
+      console.error("Verify user error:", error);
+      res.status(500).json({ message: error.message });
+    }
+  };
+}

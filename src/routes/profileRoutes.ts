@@ -1,11 +1,8 @@
 import express from "express";
 import { protect } from "../middlewares/authMiddleware";
 import { upload } from "../middlewares/uploadMiddleware";
-import {
-  getProfile,
-  updateProfile,
-  uploadProfilePicture,
-} from "../controllers/profileController";
+import { ProfileController } from "../controllers/profileController";
+import { ProfileService } from "../services/profileServices";
 import { Router } from "express";
 
 import { updateProfileSchema } from "../validators/profile.validator";
@@ -13,6 +10,9 @@ import { updateProfileSchema } from "../validators/profile.validator";
 import validate from "../middlewares/validateRequest";
 
 const router: Router = Router();
+
+const profileService = new ProfileService();
+const profileController = new ProfileController(profileService);
 
 /**
  * @swagger
@@ -43,7 +43,7 @@ const router: Router = Router();
  *       401:
  *         description: Unauthorized
  */
-router.get("/", protect, getProfile);
+router.get("/", protect, profileController.getProfile);
 
 /**
  * @swagger
@@ -74,7 +74,12 @@ router.get("/", protect, getProfile);
  *       404:
  *         description: User not found
  */
-router.put("/", protect, validate(updateProfileSchema), updateProfile);
+router.put(
+  "/",
+  protect,
+  validate(updateProfileSchema),
+  profileController.updateProfile
+);
 
 /**
  * @swagger
@@ -102,6 +107,11 @@ router.put("/", protect, validate(updateProfileSchema), updateProfile);
  *       401:
  *         description: Unauthorized
  */
-router.post("/upload", protect, upload.single("profile"), uploadProfilePicture);
+router.post(
+  "/upload",
+  protect,
+  upload.single("profile"),
+  profileController.uploadProfilePicture
+);
 
 export default router;

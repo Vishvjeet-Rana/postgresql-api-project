@@ -1,12 +1,5 @@
-import {
-  register,
-  login,
-  getMe,
-  forgotPassword,
-  resetPassword,
-  changePassword,
-} from "../controllers/authController";
-
+import { AuthController } from "../controllers/authController";
+import { AuthService } from "../services/authServices";
 import { protect } from "../middlewares/authMiddleware";
 import { Router } from "express";
 
@@ -33,6 +26,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const router: Router = Router();
+
+const authService = new AuthService();
+const authController = new AuthController(authService);
 
 /**
  * @swagger
@@ -67,7 +63,7 @@ router.post(
   "/register",
   upload.single("image"),
   validate(registerSchema),
-  register
+  authController.register
 );
 
 /**
@@ -94,7 +90,7 @@ router.post(
  *       400:
  *         description: Invalid credentials
  */
-router.post("/login", validate(loginSchema), login);
+router.post("/login", validate(loginSchema), authController.login);
 
 /**
  * @swagger
@@ -110,7 +106,7 @@ router.post("/login", validate(loginSchema), login);
  *       401:
  *         description: Unauthorized
  */
-router.get("/me", protect, getMe);
+router.get("/me", protect, authController.getMe);
 
 /**
  * @swagger
@@ -134,7 +130,11 @@ router.get("/me", protect, getMe);
  *       400:
  *         description: User not found
  */
-router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
+router.post(
+  "/forgot-password",
+  validate(forgotPasswordSchema),
+  authController.forgotPassword
+);
 
 /**
  * @swagger
@@ -168,7 +168,7 @@ router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
 router.post(
   "/reset-password/:token",
   validate(resetPasswordSchema),
-  resetPassword
+  authController.resetPassword
 );
 
 /**
@@ -203,7 +203,7 @@ router.post(
   "/change-password",
   protect,
   validate(changePasswordSchema),
-  changePassword
+  authController.changePassword
 );
 
 export default router;

@@ -10,7 +10,7 @@ export const createUserByAdminService = async (
   name: string,
   email: string,
   adminName: string
-) => {
+): Promise<User> => {
   const isUserExists = await prisma.user.findUnique({
     where: { email },
   });
@@ -48,7 +48,20 @@ export const createUserByAdminService = async (
   return user;
 };
 
-export const getAllUsersService = async (verifiedQuery?: string) => {
+type PublicUser = Pick<
+  User,
+  | "id"
+  | "name"
+  | "email"
+  | "role"
+  | "isVerified"
+  | "profilePicture"
+  | "createdAt"
+>;
+
+export const getAllUsersService = async (
+  verifiedQuery?: string
+): Promise<PublicUser[]> => {
   const filter = verifiedQuery === "false" ? { isVerified: false } : {};
 
   const users = await prisma.user.findMany({
@@ -67,7 +80,12 @@ export const getAllUsersService = async (verifiedQuery?: string) => {
   return users;
 };
 
-export const getUserByIdService = async (userId: number) => {
+type IdUser = Pick<
+  User,
+  "id" | "name" | "email" | "role" | "isVerified" | "createdAt"
+>;
+
+export const getUserByIdService = async (userId: number): Promise<IdUser> => {
   if (isNaN(userId)) throw new Error("Invalid user Id");
 
   const user = await prisma.user.findUnique({
@@ -98,7 +116,7 @@ interface UpdateUserInput {
 export const updatedUserService = async (
   userId: number,
   data: UpdateUserInput
-) => {
+): Promise<User> => {
   if (isNaN(userId)) throw new Error("Invalid user Id");
 
   // Filter out unwanted placeholder values like "string"
@@ -120,7 +138,9 @@ export const updatedUserService = async (
   }
 };
 
-export const deleteUserService = async (userId: number) => {
+export const deleteUserService = async (
+  userId: number
+): Promise<{ message: string }> => {
   if (isNaN(userId)) {
     throw new Error("Invalid user Id");
   }
@@ -138,7 +158,9 @@ export const deleteUserService = async (userId: number) => {
   return { message: "User deleted successfully" };
 };
 
-export const verifyUserService = async (userId: number) => {
+export const verifyUserService = async (
+  userId: number
+): Promise<{ message: string; user: User }> => {
   if (isNaN(userId)) throw new Error("Invalid user Id");
 
   const user = await prisma.user.findUnique({

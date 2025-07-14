@@ -6,7 +6,7 @@ export const createPostService = async (
   content: string,
   authorId: number,
   image?: string
-) => {
+): Promise<Post> => {
   if (!title || !content) {
     throw new Error("Title and Content is required");
   }
@@ -23,7 +23,10 @@ export const createPostService = async (
   return post;
 };
 
-export const getAllPostsService = async () => {
+// about return type --> each item is a full Post object, and also has an author object with name and email.
+export const getAllPostsService = async (): Promise<
+  (Post & { author: { name: string; email: string } })[]
+> => {
   const posts = await prisma.post.findMany({
     include: {
       author: {
@@ -38,7 +41,9 @@ export const getAllPostsService = async () => {
   return posts;
 };
 
-export const getPostByIdService = async (postId: number) => {
+export const getPostByIdService = async (
+  postId: number
+): Promise<Post & { author: { name: string; email: string } }> => {
   const post = await prisma.post.findUnique({
     where: { id: postId },
     include: {
@@ -60,7 +65,7 @@ export const updatedPostService = async (
   postId: number,
   title?: string,
   content?: string
-) => {
+): Promise<Post> => {
   const post = await prisma.post.findUnique({
     where: { id: postId },
   });
@@ -80,7 +85,9 @@ export const updatedPostService = async (
   return updatedPost;
 };
 
-export const deletePostService = async (postId: number) => {
+export const deletePostService = async (
+  postId: number
+): Promise<{ message: string }> => {
   const post = await prisma.post.findUnique({
     where: { id: postId },
   });

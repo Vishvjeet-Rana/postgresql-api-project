@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config({ quiet: true });
+import type { SentMessageInfo } from "nodemailer";
 
 if (!process.env.SENDGRID_EMAIL || !process.env.SENDGRID_API_KEY) {
   throw new Error("Missing sendGrid config in env file");
@@ -21,7 +22,11 @@ interface SendMailOptions {
   html: string;
 }
 
-export const sendMail = async ({ to, subject, html }: SendMailOptions) => {
+export const sendMail = async ({
+  to,
+  subject,
+  html,
+}: SendMailOptions): Promise<SentMessageInfo> => {
   try {
     await transporter.sendMail({
       from: process.env.SENDGRID_EMAIL,

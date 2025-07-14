@@ -1,6 +1,13 @@
 import prisma from "../config/db";
+import { User } from "../generated/prisma";
 
-export const getProfileService = async (userId: number) => {
+type TypeGetProfile = Pick<
+  User,
+  "id" | "name" | "email" | "role" | "profilePicture" | "createdAt"
+>;
+export const getProfileService = async (
+  userId: number
+): Promise<TypeGetProfile | null> => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
@@ -20,7 +27,7 @@ export const updateProfileService = async (
   userId: number,
   name?: string,
   email?: string
-) => {
+): Promise<User> => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
@@ -40,7 +47,7 @@ export const updateProfileService = async (
 export const uploadProfilePictureService = async (
   userId: number,
   filename: string
-) => {
+): Promise<{ user: User; filePath: string }> => {
   const filePath = `/uploads/${filename}`;
 
   const user = await prisma.user.update({

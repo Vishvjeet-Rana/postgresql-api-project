@@ -10,7 +10,7 @@ export const registerUser = async (
   email: string,
   password: string,
   image?: string
-) => {
+): Promise<User> => {
   const isUserExists = await prisma.user.findUnique({
     where: { email },
   });
@@ -40,7 +40,15 @@ export const registerUser = async (
   return user;
 };
 
-export const loginUserService = async (email: string, password: string) => {
+type TypeLoginUser = Pick<
+  User,
+  "id" | "name" | "email" | "role" | "profilePicture"
+>;
+
+export const loginUserService = async (
+  email: string,
+  password: string
+): Promise<{ token: string; user: TypeLoginUser }> => {
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user || !user.password) {
@@ -66,7 +74,7 @@ export const loginUserService = async (email: string, password: string) => {
   };
 };
 
-export const forgotPasswordService = async (email: string) => {
+export const forgotPasswordService = async (email: string): Promise<void> => {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     throw new Error("User not found");
@@ -100,7 +108,7 @@ export const forgotPasswordService = async (email: string) => {
 export const resetPasswordService = async (
   token: string,
   newPassword: string
-) => {
+): Promise<void> => {
   const user = await prisma.user.findFirst({
     where: {
       resetToken: token,
@@ -130,7 +138,7 @@ export const changePasswordService = async (
   userId: number,
   oldPassword: string,
   newPassword: string
-) => {
+): Promise<void> => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });

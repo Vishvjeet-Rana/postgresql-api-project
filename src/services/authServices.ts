@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import prisma from "../config/db";
 import { sendMail } from "../utils/sendMail";
 import { generateToken } from "../utils/jwtUtils";
-import { User } from "../../generated/prisma";
+import { User } from "../generated/prisma";
 
 export const registerUser = async (
   name: string,

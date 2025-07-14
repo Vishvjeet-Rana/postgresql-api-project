@@ -1,5 +1,4 @@
 import prisma from "../config/db";
-import { User } from "../../generated/prisma";
 
 export const getProfileService = async (userId: number) => {
   const user = await prisma.user.findUnique({

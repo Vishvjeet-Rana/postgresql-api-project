@@ -1,5 +1,5 @@
-import { Post } from "../../generated/prisma";
-import prisma from "../config/db";
+import { Post } from "../generated/prisma";
+import prisma from "../config/db.js";
 
 export const createPostService = async (
   title: string,

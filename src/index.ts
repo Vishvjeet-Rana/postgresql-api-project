@@ -4,7 +4,7 @@ dotenv.config({ quiet: true });
 import cors from "cors";
 import prisma from "./config/db";
 import { swaggerDocs } from "./swagger";
-import authRoutes from "./routes/authRoutes";
+import authRoutes from "../src/routes/authRoutes";
 import profileRoutes from "./routes/profileRoutes";
 import postRoutes from "./routes/postRoutes";
 import adminRoutes from "./routes/adminRoutes";

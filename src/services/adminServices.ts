@@ -3,8 +3,8 @@ import { sendMail } from "../utils/sendMail"; // Removed .js extension
 import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 dotenv.config({ quiet: true });
-import { User } from "../../generated/prisma";
-import { Role } from "../../generated/prisma";
+import { User } from "../generated/prisma";
+import { Role } from "../generated/prisma";
 
 export const createUserByAdminService = async (
   name: string,

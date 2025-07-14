@@ -1,19 +1,17 @@
 import { Request, Response } from "express";
-import {
-  createUserByAdminService,
-  deleteUserService,
-  getAllUsersService,
-  getUserByIdService,
-  updatedUserService,
-  verifyUserService,
-} from "../services/adminServices";
+import { AdminService } from "../services/adminServices";
+const adminService = new AdminService();
 
 // Admin creates a new user
 export const createUser = async (req: Request, res: Response) => {
   try {
     const { name, email } = req.body;
 
-    const user = await createUserByAdminService(name, email, req.user.name);
+    const user = await adminService.createUserByAdminService(
+      name,
+      email,
+      req.user.name
+    );
 
     res.status(200).json({
       message: "User created successfully and email sent to reset password",
@@ -35,7 +33,7 @@ export const createUser = async (req: Request, res: Response) => {
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const verifiedQuery = req.query.verified as string;
-    const users = await getAllUsersService(verifiedQuery);
+    const users = await adminService.getAllUsersService(verifiedQuery);
 
     res.status(200).json(users);
   } catch (error: any) {
@@ -47,7 +45,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.id);
-    const user = await getUserByIdService(userId);
+    const user = await adminService.getUserByIdService(userId);
     res.status(200).json(user);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
@@ -58,7 +56,7 @@ export const getUserById = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.id);
-    const updatedUser = await updatedUserService(userId, req.body);
+    const updatedUser = await adminService.updatedUserService(userId, req.body);
     res.json({
       message: "User updated successfully",
       user: updatedUser,
@@ -72,7 +70,7 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.id);
-    const result = await deleteUserService(userId);
+    const result = await adminService.deleteUserService(userId);
 
     return res.status(200).json(result);
   } catch (error: any) {
@@ -84,7 +82,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const verifyUser = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.id);
-    const result = await verifyUserService(userId);
+    const result = await adminService.verifyUserService(userId);
 
     return res.status(200).json(result);
   } catch (error: any) {

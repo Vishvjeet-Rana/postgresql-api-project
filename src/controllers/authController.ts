@@ -1,11 +1,6 @@
 import { Request, Response } from "express";
-import {
-  changePasswordService,
-  forgotPasswordService,
-  loginUserService,
-  registerUser,
-  resetPasswordService,
-} from "../services/authServices";
+import { AuthService } from "../services/authServices";
+const authService = new AuthService();
 
 export const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
@@ -13,7 +8,12 @@ export const register = async (req: Request, res: Response) => {
   const image = req.file?.filename;
 
   try {
-    const user = await registerUser(name, email, password, image);
+    const user = await authService.registerUserService(
+      name,
+      email,
+      password,
+      image
+    );
     res.status(201).json({
       message: "User registered successfully",
       user: {
@@ -34,7 +34,7 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const { token, user } = await loginUserService(email, password);
+    const { token, user } = await authService.loginUserService(email, password);
 
     res.status(200).json({
       message: "Logged in successfully",
@@ -54,7 +54,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
   const { email } = req.body;
 
   try {
-    await forgotPasswordService(email);
+    await authService.forgotPasswordService(email);
     res.status(200).json({ message: "Reset link sent to user via email" });
   } catch (error: any) {
     res.status(400).json({ message: error.message });
@@ -66,7 +66,7 @@ export const resetPassword = async (req: Request, res: Response) => {
   const { newPassword } = req.body;
 
   try {
-    await resetPasswordService(token, newPassword);
+    await authService.resetPasswordService(token, newPassword);
     res.status(200).json({
       message: "Password reset successfully",
     });
@@ -79,7 +79,11 @@ export const changePassword = async (req: Request, res: Response) => {
   const { oldPassword, newPassword } = req.body;
 
   try {
-    await changePasswordService(req.user.id, oldPassword, newPassword);
+    await authService.changePasswordService(
+      req.user.id,
+      oldPassword,
+      newPassword
+    );
     res.status(200).json({ message: "Password changed successfully" });
   } catch (error: any) {
     res.status(400).json({ message: error.message });

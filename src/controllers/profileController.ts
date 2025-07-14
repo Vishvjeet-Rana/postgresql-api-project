@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
-import {
-  getProfileService,
-  updateProfileService,
-  uploadProfilePictureService,
-} from "../services/profileServices";
+import { ProfileService } from "../services/profileServices";
+const profileService = new ProfileService();
 
 export const getProfile = async (req: Request, res: Response) => {
-  const user = await getProfileService(req.user.id);
+  const user = await profileService.getProfileService(req.user.id);
 
   res.status(200).json(user);
 };
@@ -15,7 +12,11 @@ export const updateProfile = async (req: Request, res: Response) => {
   const { name, email } = req.body;
 
   try {
-    const updatedUser = await updateProfileService(req.user.id, name, email);
+    const updatedUser = await profileService.updateProfileService(
+      req.user.id,
+      name,
+      email
+    );
 
     res.status(200).json({
       message: "Profile updated successfully",
@@ -35,7 +36,7 @@ export const uploadProfilePicture = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Profile picture not uploaded" });
   }
 
-  const { user, filePath } = await uploadProfilePictureService(
+  const { user, filePath } = await profileService.uploadProfilePictureService(
     req.user.id,
     req.file.filename
   );

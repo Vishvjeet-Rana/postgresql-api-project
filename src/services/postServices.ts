@@ -24,7 +24,7 @@ export const createPostService = async (
 };
 
 export const getAllPostsService = async () => {
-  const posts: Post = await prisma.post.findMany({
+  const posts = await prisma.post.findMany({
     include: {
       author: {
         select: {
@@ -39,7 +39,7 @@ export const getAllPostsService = async () => {
 };
 
 export const getPostByIdService = async (postId: number) => {
-  const post: Post = await prisma.post.findUnique({
+  const post = await prisma.post.findUnique({
     where: { id: postId },
     include: {
       author: {
@@ -61,7 +61,7 @@ export const updatedPostService = async (
   title?: string,
   content?: string
 ) => {
-  const post: Post = await prisma.post.findUnique({
+  const post = await prisma.post.findUnique({
     where: { id: postId },
   });
 
@@ -81,7 +81,7 @@ export const updatedPostService = async (
 };
 
 export const deletePostService = async (postId: number) => {
-  const post: Post = await prisma.post.findUnique({
+  const post = await prisma.post.findUnique({
     where: { id: postId },
   });
 

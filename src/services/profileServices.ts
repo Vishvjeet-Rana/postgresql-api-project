@@ -2,7 +2,7 @@ import prisma from "../config/db";
 import { User } from "../../generated/prisma";
 
 export const getProfileService = async (userId: number) => {
-  const user: User = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
       id: true,
@@ -22,7 +22,7 @@ export const updateProfileService = async (
   name?: string,
   email?: string
 ) => {
-  const user: User = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
   });
   if (!user) throw new Error("User not found");

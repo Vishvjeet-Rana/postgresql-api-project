@@ -4,13 +4,14 @@ import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 dotenv.config({ quiet: true });
 import { User } from "../../generated/prisma";
+import { Role } from "../../generated/prisma";
 
 export const createUserByAdminService = async (
   name: string,
   email: string,
   adminName: string
 ) => {
-  const isUserExists: User = await prisma.user.findUnique({
+  const isUserExists = await prisma.user.findUnique({
     where: { email },
   });
   if (isUserExists) {
@@ -50,7 +51,7 @@ export const createUserByAdminService = async (
 export const getAllUsersService = async (verifiedQuery?: string) => {
   const filter = verifiedQuery === "false" ? { isVerified: false } : {};
 
-  const users: User = await prisma.user.findMany({
+  const users = await prisma.user.findMany({
     where: filter,
     select: {
       id: true,
@@ -69,7 +70,7 @@ export const getAllUsersService = async (verifiedQuery?: string) => {
 export const getUserByIdService = async (userId: number) => {
   if (isNaN(userId)) throw new Error("Invalid user Id");
 
-  const user: User = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
       id: true,
@@ -91,7 +92,7 @@ export const getUserByIdService = async (userId: number) => {
 interface UpdateUserInput {
   name?: string;
   email?: string;
-  role?: string;
+  role?: Role;
 }
 
 export const updatedUserService = async (
@@ -104,7 +105,8 @@ export const updatedUserService = async (
   const updateData: UpdateUserInput = {};
   if (data.name && data.name !== "string") updateData.name = data.name;
   if (data.email && data.email !== "string") updateData.email = data.email;
-  if (data.role && data.role !== "string") updateData.role = data.role;
+  if (data.role && ["USER", "ADMIN"].includes(data.role))
+    updateData.role = data.role as Role;
 
   try {
     const updatedUser = await prisma.user.update({
@@ -123,7 +125,7 @@ export const deleteUserService = async (userId: number) => {
     throw new Error("Invalid user Id");
   }
 
-  const user: User = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
   });
 
@@ -139,7 +141,7 @@ export const deleteUserService = async (userId: number) => {
 export const verifyUserService = async (userId: number) => {
   if (isNaN(userId)) throw new Error("Invalid user Id");
 
-  const user: User = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
   });
 

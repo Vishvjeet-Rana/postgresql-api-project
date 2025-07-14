@@ -11,7 +11,7 @@ export const registerUser = async (
   password: string,
   image?: string
 ) => {
-  const isUserExists: User = await prisma.user.findUnique({
+  const isUserExists = await prisma.user.findUnique({
     where: { email },
   });
 
@@ -41,7 +41,7 @@ export const registerUser = async (
 };
 
 export const loginUserService = async (email: string, password: string) => {
-  const user: User = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user || !user.password) {
     throw new Error("User not found.");
@@ -67,7 +67,7 @@ export const loginUserService = async (email: string, password: string) => {
 };
 
 export const forgotPasswordService = async (email: string) => {
-  const user: User = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     throw new Error("User not found");
   }
@@ -101,7 +101,7 @@ export const resetPasswordService = async (
   token: string,
   newPassword: string
 ) => {
-  const user: User = await prisma.user.findFirst({
+  const user = await prisma.user.findFirst({
     where: {
       resetToken: token,
       resetTokenExpire: {
@@ -131,7 +131,7 @@ export const changePasswordService = async (
   oldPassword: string,
   newPassword: string
 ) => {
-  const user: User = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
   });
 

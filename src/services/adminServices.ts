@@ -46,3 +46,114 @@ export const createUserByAdminService = async (
 
   return user;
 };
+
+export const getAllUsersService = async (verifiedQuery?: string) => {
+  const filter = verifiedQuery === "false" ? { isVerified: false } : {};
+
+  const users: User = await prisma.user.findMany({
+    where: filter,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isVerified: true,
+      profilePicture: true,
+      createdAt: true,
+    },
+  });
+
+  return users;
+};
+
+export const getUserByIdService = async (userId: number) => {
+  if (isNaN(userId)) throw new Error("Invalid user Id");
+
+  const user: User = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isVerified: true,
+      createdAt: true,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user;
+};
+
+interface UpdateUserInput {
+  name?: string;
+  email?: string;
+  role?: string;
+}
+
+export const updatedUserService = async (
+  userId: number,
+  data: UpdateUserInput
+) => {
+  if (isNaN(userId)) throw new Error("Invalid user Id");
+
+  // Filter out unwanted placeholder values like "string"
+  const updateData: UpdateUserInput = {};
+  if (data.name && data.name !== "string") updateData.name = data.name;
+  if (data.email && data.email !== "string") updateData.email = data.email;
+  if (data.role && data.role !== "string") updateData.role = data.role;
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+    });
+
+    return updatedUser;
+  } catch (error) {
+    throw new Error("User not found");
+  }
+};
+
+export const deleteUserService = async (userId: number) => {
+  if (isNaN(userId)) {
+    throw new Error("Invalid user Id");
+  }
+
+  const user: User = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  await prisma.user.delete({
+    where: { id: userId },
+  });
+
+  return { message: "User deleted successfully" };
+};
+
+export const verifyUserService = async (userId: number) => {
+  if (isNaN(userId)) throw new Error("Invalid user Id");
+
+  const user: User = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const verifiedUpdatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      isVerified: true,
+    },
+  });
+
+  return {
+    message: "User verified successfully",
+    user: verifiedUpdatedUser,
+  };
+};

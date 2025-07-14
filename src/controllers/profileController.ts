@@ -1,19 +1,12 @@
-import prisma from "../config/db";
 import { Request, Response } from "express";
-import { User } from "../../generated/prisma";
+import {
+  getProfileService,
+  updateProfileService,
+  uploadProfilePictureService,
+} from "../services/profileServices";
 
 export const getProfile = async (req: Request, res: Response) => {
-  const user: User = await prisma.user.findUnique({
-    where: { id: req.user.id },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      profilePicture: true,
-      createdAt: true,
-    },
-  });
+  const user = await getProfileService(req.user.id);
 
   res.status(200).json(user);
 };
@@ -21,27 +14,20 @@ export const getProfile = async (req: Request, res: Response) => {
 export const updateProfile = async (req: Request, res: Response) => {
   const { name, email } = req.body;
 
-  const user: User = await prisma.user.findUnique({
-    where: { id: req.user.id },
-  });
-  if (!user) return res.status(400).json({ message: "User not found" });
+  try {
+    const updatedUser = await updateProfileService(req.user.id, name, email);
 
-  const updatedUser = await prisma.user.update({
-    where: { id: req.user.id },
-    data: {
-      name: name !== "string" ? name : undefined,
-      email: email !== "string" ? email : undefined,
-    },
-  });
-
-  res.status(200).json({
-    message: "Profile updated successfully",
-    user: {
-      id: updatedUser.id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-    },
-  });
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        id: updatedUser.id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+      },
+    });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 export const uploadProfilePicture = async (req: Request, res: Response) => {
@@ -49,14 +35,10 @@ export const uploadProfilePicture = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Profile picture not uploaded" });
   }
 
-  const filePath = `/uploads/${req.file.filename}`;
-
-  const user = await prisma.user.update({
-    where: { id: req.user.id },
-    data: {
-      profilePicture: filePath,
-    },
-  });
+  const { user, filePath } = await uploadProfilePictureService(
+    req.user.id,
+    req.file.filename
+  );
 
   res.status(200).json({
     message: "Profile picture uploaded successfully",
